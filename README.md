@@ -111,4 +111,5 @@ SYM(RBRACE) na linha 8
 ## 👥 Desenvolvedores
 
 - Guilherme Soares
-- [adicione os nomes do grupo aqui]
+- Artur Rodrigues
+- Danilo Carvalho
