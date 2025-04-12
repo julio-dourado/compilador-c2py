@@ -1,2 +1,8 @@
+# Arquivos gerados pelo Flex e Bison
 lex.yy.c
 scanner
+parser    
+       
+# Executável gerado para o parser
+parser.tab.c
+parser.tab.h
