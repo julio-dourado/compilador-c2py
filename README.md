@@ -1,61 +1,101 @@
-# C to Python Compiler - Analisador Léxico
+# C to Python Compiler
 
 ## 🎯 Objetivo
 
 Este projeto faz parte da disciplina **Compiladores 1** (FGA0003) na Universidade de Brasília.  
-O objetivo desta etapa é construir um **analisador léxico** usando **Flex**, capaz de ler um código simples em **C** e identificar os principais tokens da linguagem.
-
-Este será o primeiro módulo de um compilador que traduzirá C para Python.
+Inicialmente, construímos um **analisador léxico** usando **Flex** para ler um código simples em **C** e identificar os principais tokens.  
+Agora, avançamos para a etapa de **análise sintática** (parser) usando o **Bison**, integrando o lexer ao parser.  
+No futuro, o compilador traduzirá C para Python.
 
 ---
 
 ## 📁 Estrutura do Projeto
 
-
 ```
 c2py/
-├── input.c       # Código de exemplo em C
-├── lexer.l       # Arquivo com regras léxicas (Flex)
-├── lex.yy.c      # Arquivo gerado automaticamente pelo Flex
-├── scanner       # Executável gerado com GCC
-├── Makefile      # Script de build e execução
-└── README.md     # Este documento
+├── input.c           # Código de exemplo em C
+├── lexer.l           # Analisador léxico integrado (para o parser)
+├── lexer_debug.l     # Versão de teste do analisador léxico (debug)
+├── parser.y          # Gramática e regras do parser (Bison)
+├── Makefile          # Script de build e execução
+├── README.md         # Este documento
+└── (.gitignore)      # Arquivo que lista os arquivos gerados a serem ignorados
 ```
+
+> **Observação:**  
+> Os arquivos gerados automaticamente (como `lex.yy.c`, `scanner`, `parser`, `parser.tab.c` e `parser.tab.h`) estão listados no `.gitignore` e não são versionados.
+
+---
 
 ## ▶️ Como Executar
 
-### Pré-requisitos:
+### Pré-requisitos
 
 - WSL (Linux) ou Linux nativo
-- `flex`, `gcc` e `make` instalados:
+- `flex`, `gcc`, `bison` e `make` instalados:
   ```bash
   sudo apt update
-  sudo apt install flex gcc make
+  sudo apt install flex gcc bison make
   ```
 
-### Passos:
+### Passos
 
+#### Para compilar e rodar o parser completo (lexer + parser):
 ```bash
-make        # Compila o analisador léxico
-make run    # Executa com o input.c
-make clean  # Remove arquivos gerados
+make        # Compila o parser (integra lexer.l e parser.y)
+make run    # Executa o parser com input.c
+```
+
+#### Para testar somente a análise léxica (modo debug):
+```bash
+make debug-lex    # Compila o lexer de debug (usando lexer_debug.l)
+make run-debug    # Executa o lexer de debug com input.c
+```
+
+#### Para limpar os arquivos gerados:
+```bash
+make clean
 ```
 
 ---
 
+## ✅ Tokens e Gramática (Resumido)
 
-## ✅ Tokens Reconhecidos
+### Tokens Reconhecidos (pelo lexer integrado)
 
-| Tipo         | Exemplo    | Token gerado           |
-|--------------|------------|-------------------------|
-| Palavra-chave| `int`      | `KEYWORD(int)`          |
-| Identificador| `main`     | `IDENT(main)`           |
-| Número       | `42`       | `NUM(42)`               |
-| Operador     | `+`        | `OP(PLUS)`              |
-| Símbolo      | `{`        | `SYM(LBRACE)`           |
-| Comentário   | `// ...`   | Ignorado                |
-| Comentário   | `/* ... */`| Ignorado                |
-| Erro         | `@`        | `ERRO LÉXICO: ...`      |
+| Tipo         | Exemplo       | Token retornado        |
+|--------------|---------------|------------------------|
+| Palavra-chave| `int`         | `INT`                  |
+| Palavra-chave| `main`        | `MAIN`                 |
+| Palavra-chave| `if`          | `IF`                   |
+| Palavra-chave| `return`      | `RETURN`               |
+| Identificador| `foo`         | `IDENT`                |
+| Número       | `42`          | `NUM`                  |
+| Operador     | `=`           | `OP_ASSIGN`            |
+| Operador     | `+`           | `OP_PLUS`              |
+| Operador     | `>`           | `OP_GT`                |
+| Símbolo      | `(`, `)`, `{`, `}`, `;` | `LPAREN`, `RPAREN`, `LBRACE`, `RBRACE`, `SEMI` |
+
+### Gramática Resumida (definida em `parser.y`)
+
+- **program:**  
+  Define a função `main`.
+
+- **function_decl:**  
+  Reconhece a declaração da função `main` e chama o bloco (compound_stmt).
+
+- **compound_stmt:**  
+  Define um bloco composto por declarações e comandos, incluindo instruções `if` e `return`.
+
+- **Outras regras:**  
+  Incluem declarações (com ou sem atribuição) e expressões simples.
+
+Ao rodar o parser com um exemplo de entrada, a saída deverá indicar o reconhecimento dos elementos sintáticos, como:
+- "Função main definida corretamente."
+- "Declaração com atribuição reconhecida."
+- "Estrutura if reconhecida."
+- "Retorno reconhecido."
+- E, se tudo estiver correto: "Parsing concluído com sucesso!"
 
 ---
 
@@ -72,39 +112,19 @@ int main() {
 }
 ```
 
-### Saída esperada:
+### Saída Esperada (para o parser)
+```
+Iniciando o parsing...
+Função main definida corretamente.
+Declaração com atribuição reconhecida.
+Declaração com atribuição reconhecida.
+Estrutura if reconhecida.
+Retorno reconhecido.
+Parsing concluído com sucesso!
+```
 
-```
-KEYWORD(int) na linha 1
-KEYWORD(main) na linha 1
-SYM(LPAREN) na linha 1
-SYM(RPAREN) na linha 1
-SYM(LBRACE) na linha 1
-KEYWORD(int) na linha 2
-IDENT(x) na linha 2
-OP(ASSIGN) na linha 2
-NUM(10) na linha 2
-SYM(SEMI) na linha 2
-KEYWORD(int) na linha 3
-IDENT(y) na linha 3
-OP(ASSIGN) na linha 3
-IDENT(x) na linha 3
-OP(PLUS) na linha 3
-NUM(2) na linha 3
-SYM(SEMI) na linha 3
-KEYWORD(if) na linha 5
-SYM(LPAREN) na linha 5
-IDENT(y) na linha 5
-OP(GT) na linha 5
-NUM(5) na linha 5
-SYM(RPAREN) na linha 5
-SYM(LBRACE) na linha 5
-KEYWORD(return) na linha 6
-IDENT(y) na linha 6
-SYM(SEMI) na linha 6
-SYM(RBRACE) na linha 7
-SYM(RBRACE) na linha 8
-```
+> **Observação:**  
+> A saída pode incluir mensagens adicionais definidas pelas ações semânticas nas regras do parser, conforme a implementação.
 
 ---
 
