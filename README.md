@@ -13,6 +13,13 @@ No futuro, o compilador traduzirá C para Python.
 
 ```
 c2py/
+├── docs/             # Documentação detalhada do projeto
+│   ├── sprint1.md    # Documentação da Sprint 1
+│   ├── sprint2.md    # Documentação da Sprint 2
+│   ├── sprint3.md    # Documentação da Sprint 3
+│   ├── sprint4.md    # Documentação da Sprint 4
+│   ├── sprint5.md    # Documentação da Sprint 5
+│   └── sprint6.md    # Documentação da Sprint 6
 ├── input.c           # Código de exemplo em C
 ├── lexer.l           # Analisador léxico integrado (para o parser)
 ├── lexer_debug.l     # Versão de teste do analisador léxico (debug)
@@ -99,6 +106,23 @@ Ao rodar o parser com um exemplo de entrada, a saída deverá indicar o reconhec
 
 ---
 
+## 📅 Planejamento de Sprints
+
+Para informações detalhadas sobre cada sprint, consulte a pasta [docs](/docs/) do projeto:
+
+- [Sprint 1](/docs/sprint1.md): Configuração inicial e definição da linguagem (24/03 - 22/04)
+- [Sprint 2](/docs/sprint2.md): Analisador léxico e parser inicial (23/04 - 30/04)
+- [Sprint 3](/docs/sprint3.md): Parser completo e análise semântica inicial (01/05 - 14/05)
+- [Sprint 4](/docs/sprint4.md): Análise semântica e geração de código (15/05 - 04/06)
+- [Sprint 5](/docs/sprint5.md): Otimização e geração de código final (05/06 - 25/06)
+- [Sprint 6](/docs/sprint6.md): Finalização e documentação (26/06 - 09/07)
+
+### Estado Atual
+
+Atualmente estamos na **Sprint 2**, tendo concluído o analisador léxico e iniciado a implementação do parser.
+
+---
+
 ## 🧪 Exemplo de entrada (`input.c`)
 
 ```c
@@ -130,6 +154,10 @@ Parsing concluído com sucesso!
 
 ## 👥 Desenvolvedores
 
+### Equipe de Implementação
 - Guilherme Soares
 - Artur Rodrigues
 - Danilo Carvalho
+- Julio Dourado
+- Patrick Santos
+- João Pedro
